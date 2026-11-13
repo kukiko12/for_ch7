@@ -25,7 +25,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 5vh 16px 10vh;
+      padding: 80px 16px 130px;
       background:
         radial-gradient(
           ellipse at top,
@@ -40,8 +40,13 @@
         serif;
     }
 
+    /* =====================================
+       PAPER
+       ===================================== */
+
     .paper {
       position: relative;
+      overflow: visible;
       max-width: 800px;
       margin: auto;
       padding: clamp(24px, 6vw, 70px);
@@ -51,6 +56,46 @@
       border-right: 9px solid var(--cyan);
       box-shadow: 12px 14px 0 #0006;
     }
+
+    /* =====================================
+       CINNAMOROLL STICKERS
+       ===================================== */
+
+    .paper::before,
+    .paper::after {
+      content: "";
+      position: absolute;
+      display: block;
+      pointer-events: none;
+      z-index: 5;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+    }
+
+    /* 右上角探头玉桂狗 */
+    .paper::before {
+      width: 190px;
+      height: 130px;
+      top: -78px;
+      right: -28px;
+      background-image:
+        url("./cinnamoroll-peek.png");
+    }
+
+    /* 左下角睡觉玉桂狗 */
+    .paper::after {
+      width: 180px;
+      height: 145px;
+      bottom: -85px;
+      left: -25px;
+      background-image:
+        url("./cinnamoroll-sleep.png");
+    }
+
+    /* =====================================
+       LETTER
+       ===================================== */
 
     .kicker {
       font: 12px/1.8 monospace;
@@ -74,6 +119,10 @@
       text-align: right;
       margin-top: 44px !important;
     }
+
+    /* =====================================
+       ENDING BUTTONS
+       ===================================== */
 
     .response {
       border-top: 1px dashed #b4aab1;
@@ -123,7 +172,9 @@
       margin-top: 18px;
     }
 
-    /* Page transition */
+    /* =====================================
+       PAGE TRANSITION
+       ===================================== */
 
     .page {
       transform-origin: left center;
@@ -159,7 +210,9 @@
       }
     }
 
-    /* Ending pages */
+    /* =====================================
+       ENDING PAGES
+       ===================================== */
 
     .ending-title {
       font: 14px/1.8 monospace;
@@ -205,15 +258,33 @@
       border-color: var(--pink);
     }
 
+    /* =====================================
+       MOBILE
+       ===================================== */
+
     @media (max-width: 600px) {
       body {
-        padding: 20px 10px 60px;
+        padding: 65px 10px 100px;
       }
 
       .paper {
         padding: 28px 22px;
         border-left-width: 5px;
         border-right-width: 5px;
+      }
+
+      .paper::before {
+        width: 125px;
+        height: 90px;
+        top: -52px;
+        right: -8px;
+      }
+
+      .paper::after {
+        width: 125px;
+        height: 105px;
+        bottom: -60px;
+        left: -8px;
       }
 
       .ending-buttons {
@@ -388,6 +459,7 @@
       <div class="notice">
         选择结局后，你愿意告诉我嘛？
         你也可以不作选择。
+        点击选项会向写信的人发送选择及时间。
       </div>
 
     </section>
@@ -413,9 +485,7 @@
 
     // ==========================================
     // ENDINGS
-    //
-    // 修改结局文字，只需要编辑这里。
-    // 每个数组元素代表一个自然段。
+    // 修改结局文字只需要编辑 paragraphs
     // ==========================================
 
     const endings = {
@@ -501,7 +571,6 @@
           behavior: "instant"
         });
 
-        // 绑定新页面上的按钮
         bindPageEvents();
 
         setTimeout(() => {
@@ -512,7 +581,7 @@
     }
 
     // ==========================================
-    // RENDER ENDING
+    // HTML ESCAPING
     // ==========================================
 
     function escapeHTML(text) {
@@ -523,6 +592,10 @@
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
     }
+
+    // ==========================================
+    // RENDER ENDING
+    // ==========================================
 
     function renderEnding(choice) {
 
@@ -573,9 +646,7 @@
 
     // ==========================================
     // FORMSPREE
-    //
-    // 只记录主动点击的结局选择。
-    // 不记录页面打开、阅读时间等信息。
+    // 只记录主动点击结局的行为
     // ==========================================
 
     function sendChoice(choice) {
@@ -618,7 +689,6 @@
 
     function bindPageEvents() {
 
-      // 两个结局按钮
       document
         .querySelectorAll("[data-ending]")
         .forEach(button => {
@@ -631,17 +701,13 @@
 
             if (!endings[choice]) return;
 
-            // 先翻页
             renderEnding(choice);
-
-            // 再异步发送选择
             sendChoice(choice);
 
           });
 
         });
 
-      // 返回原始信件
       const backButton =
         document.getElementById("back-to-letter");
 
